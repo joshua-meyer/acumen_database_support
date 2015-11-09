@@ -1,0 +1,8 @@
+The database_connection.rb script in the initializers folder depends on a db_config.yml file in this folder for database credentials. Format should be like:
+
+acumen:
+  user: a user with write access
+  password: hopefully something secure
+  dbname: postgres
+  port: 5432
+  host: The "Public DNS" of the EC2 instance running the database

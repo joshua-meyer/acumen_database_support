@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require File.expand_path("../../initializers/database_connection.rb", __FILE__)
+require File.expand_path("../../lib/base.rb", __FILE__)
+require File.expand_path("../../lib/data_cleaning.rb", __FILE__)
+require File.expand_path("../../lib/insert_operations.rb", __FILE__)
+
+include Base
+include InsertOperations
+include DataCleaning
+
+binding.pry

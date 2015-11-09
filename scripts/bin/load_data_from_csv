@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+require 'csv'
+
+require File.expand_path("../../initializers/database_connection.rb", __FILE__)
+require File.expand_path("../../lib/insert_operations.rb", __FILE__)
+require File.expand_path("../../lib/data_cleaning.rb", __FILE__)
+
+include Base
+include InsertOperations
+include DataCleaning
+
+def make_user_pick(list, category)
+  if list.count == 1
+    return list[0]
+  elsif list.count > 1
+    question_string = "Select one of the following #{category}:\n#{list.join("\n")}"
+    is_in_list = Proc.new { |s| list.include? s }
+    return keep_asking_until_you_get_a_valid_response(question_string, is_in_list)
+  else
+    abort("No #{category} detected, exiting.")
+  end
+end
+
+schemas = query_for_list_of_table_schemas.to_a.map { |r| r["table_schema"] }.reject { |s| DEFAULT_SCHEMAS.include? s }
+selected_schema = make_user_pick(schemas, "schemas")
+
+tables = query_for_list_of_tables_in_schema(selected_schema).to_a.map { |h| h["table_name"] }
+selected_table = make_user_pick(tables, "tables")
+
+selected_csv = make_user_pick(csv_files, "CSVs")
+
+puts "Loading data from CSV . . ."
+csv_data = CSV.read(selected_csv)
+error_filename = selected_csv.split("/").last.split(".").first + "_errors.csv"
+error_filepath = File.expand_path("../../../errors/" + error_filename, __FILE__)
+begin
+  error_file = File.open(error_filepath, "w")
+  puts "Inserting into table . . ."
+   # a row is yielded if it cannot be inserted
+  insert_yield_bad_rows(selected_schema, selected_table, csv_data) do |bad_row|
+    error_file << row
+    error_file << "\n"
+  end
+ensure
+  error_file.close
+end

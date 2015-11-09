@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+migration_folder = File.expand_path("../../migrations/", __FILE__)
+migration_filenames = Dir.entries(migration_folder).reject { |f| f[0] == "." }.sort
+migration_filepaths = migration_filenames.map { |f| migration_folder + "/" + f }
+
+migration_filepaths.each do |filepath|
+  require filepath
+end
