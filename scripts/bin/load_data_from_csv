@@ -33,16 +33,15 @@ selected_csv = make_user_pick(csv_files, "CSVs")
 puts "Loading data from CSV . . ."
 csv_data = CSV.read(selected_csv)
 error_folder = File.expand_path("../../../errors/", __FILE__)
-`mkdir error_folder`
+`mkdir #{error_folder}`
 error_filename = selected_csv.split("/").last.split(".").first + "_errors.csv"
-error_filepath = error_folder + error_filename
+error_filepath = error_folder + "/" + error_filename
 begin
   error_file = File.open(error_filepath, "w")
   puts "Inserting into table . . ."
    # a row is yielded if it cannot be inserted
   insert_yield_bad_rows(selected_schema, selected_table, csv_data) do |bad_row|
-    error_file << row
-    error_file << "\n"
+    error_file << bad_row.map { |v| "\"#{v}\"" }.join(",") + "\n"
   end
 ensure
   error_file.close

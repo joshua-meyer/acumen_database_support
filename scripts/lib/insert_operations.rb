@@ -58,9 +58,9 @@ module Base
         small_chunks = big_chunk.each_slice(batch_size).to_a
         small_chunks.each do |small_chunk|
           begin
-            ACUMEN.exec(write_insert_query(schema, table, chunk))
+            ACUMEN.exec(write_insert_query(schema, table, small_chunk))
           rescue
-            yield chunk
+            yield small_chunk
           end
         end
       end
