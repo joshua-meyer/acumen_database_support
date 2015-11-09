@@ -32,8 +32,10 @@ selected_csv = make_user_pick(csv_files, "CSVs")
 
 puts "Loading data from CSV . . ."
 csv_data = CSV.read(selected_csv)
+error_folder = File.expand_path("../../../errors/", __FILE__)
+`mkdir error_folder`
 error_filename = selected_csv.split("/").last.split(".").first + "_errors.csv"
-error_filepath = File.expand_path("../../../errors/" + error_filename, __FILE__)
+error_filepath = error_folder + error_filename
 begin
   error_file = File.open(error_filepath, "w")
   puts "Inserting into table . . ."
