@@ -29,18 +29,7 @@ module Base
       first_line_of_insert_query(schema, table) + "\n" + body_of_insert_query(array_of_arrays)
     end
 
-    def insert_defensively(schema, table, array_of_arrays)
-      bads0 = []
-      insert_in_batches(schema, table, array_of_arrays, 10000) { |b| bads0 << b }
-      bads1 = []
-      insert_in_batches(schema, table, bads0, 1000) { |b| bads1 << b }
-      bads2 = []
-      insert_in_batches(schema, table, bads1, 100) { |b| bads2 << b }
-      bads3 = []
-      insert_in_batches(schema, table, bads2, 10) { |b| bads3 << b }
-      insert_in_batches(schema, table, bads2, 1) { |b| yield b }
-    end
-
+    # Inserting 1 row at a time is too slow, but we need to deal with the occasional bad row.
     def insert_yield_bad_rows(schema, table, array_of_arrays)
       batch_size = 10000
       input_chunks = [array_of_arrays]
