@@ -1,4 +1,5 @@
-ssh ec2-user@52.33.143.45 -i ~/.ssh/acumen_psql.pem
+ssh ec2-user@12.34.56.78 -i ~/.ssh/acumen_psql.pem
+12.34.56.78 - use whatever IP is listed on the EC2 page (it changes each time you reboot the instance)
 
 http://imperialwicket.com/aws-install-postgresql-on-amazon-linux-quick-and-dirty/
 
@@ -52,3 +53,12 @@ or
 sudo chmod a+w /var/run/postgresql
 
 CREATE SCHEMA salesforce_data
+
+=======================================================================================
+
+create user fjkdsla with login password ''
+
+grant usage on schema salesforce_data to fjkdsla
+
+grant select on all tables in schema salesforce_data to fjkdsla
+
